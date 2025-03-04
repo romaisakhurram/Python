@@ -11,7 +11,7 @@ if files:
         ext = file.name.split(".")[-1]
         df = pd.read_csv(file) if ext == "csv" else pd.read_excel(file)
 
-        st.sumheader(f"{file.name} - Preview")
+        st.subheader(f"{file.name} - Preview")
         st.dataframe(df.head())
     
     if st.checkbox(f"Remove Duplicate - {file.name}"):
