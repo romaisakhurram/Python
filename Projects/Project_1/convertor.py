@@ -19,8 +19,8 @@ if files:
         st.success("Duplicates Removed")
         st.dataframe(df.head())
 
-    if st.checkbox(f"Remove Empty Rows - {file.name}"):
-        df = fillna(df.select_dtypes(include=["number"]).mean() , inplace=True)
+    if st.checkbox(f"Fill Missing value - {file.name}"):
+        df = fillno(df.select_dtypes(include=["number"]).mean() , inplace=True)
         st.success("Missing Values filled with mean")
         st.dataframe(df.head())
 
