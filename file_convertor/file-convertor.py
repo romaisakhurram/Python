@@ -10,7 +10,7 @@ files = st.file_uploader("Upload csv or Excel files", type=["csv", "xlsx"], acce
 if files:
     for file in files:
         ext = file.name.split(".")[-1]
-        df = pd.read_csv(file) if ext == "csv" else pd.read_excel(BytesIO(file.read()))
+        df = pd.read_csv(file) if ext == "csv" else pd.read_excel(BytesIO(file.read()), engine="openpyxl")
         file.seek(0)  # Reset file pointer after reading
         try:
             df = pd.read_csv(file) if ext == "csv" else pd.read_excel(BytesIO(file.read()), engine="openpyxl")
