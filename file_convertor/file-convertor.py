@@ -3,13 +3,6 @@ import pandas as pd
 import os
 from io import BytesIO
 
-# Ensure openpyxl is installed
-try:
-    import openpyxl
-except ImportError:
-    st.error("Missing optional dependency 'openpyxl'. Please install it using pip: pip install openpyxl")
-    st.stop()
-
 st.set_page_config(page_title="File Convertor", layout="wide")
 st.title("File Convertor & Cleaner")
 st.write("It can convert CSV to Excel, Excel to CSV, and clean the data by removing duplicates and empty rows.")
