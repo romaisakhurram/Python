@@ -3,8 +3,15 @@ import pandas as pd
 import os
 from io import BytesIO
 
+# Ensure openpyxl is installed
+try:
+    import openpyxl
+except ImportError:
+    st.error("Missing optional dependency 'openpyxl'. Please install it using pip: pip install openpyxl")
+    st.stop()
+
 st.set_page_config(page_title="File Convertor", layout="wide")
-st.title("File Convertor")
+st.title("File Convertor & Cleaner")
 st.write("It can convert CSV to Excel, Excel to CSV, and clean the data by removing duplicates and empty rows.")
 
 files = st.file_uploader("Upload CSV or Excel files", type=["csv", "xlsx"], accept_multiple_files=True)
@@ -59,7 +66,7 @@ if files:
                     mime_type = "text/csv"
                     file_name = file.name.replace(ext, "csv")
                 elif conversion_type == "Excel":
-                    df.to_excel(buffer, index=False)
+                    df.to_excel(buffer, index=False, engine="openpyxl")
                     mime_type = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
                     file_name = file.name.replace(ext, "xlsx")
                 buffer.seek(0)
