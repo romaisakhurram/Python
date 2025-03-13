@@ -59,7 +59,7 @@ if files:
                     mime_type = "text/csv"
                     file_name = file.name.replace(ext, "csv")
                 elif conversion_type == "Excel":
-                    df.to_excel(buffer, index=False, engine="openpyxl")
+                    df.to_excel(buffer, index=False)
                     mime_type = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
                     file_name = file.name.replace(ext, "xlsx")
                 buffer.seek(0)
