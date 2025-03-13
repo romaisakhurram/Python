@@ -55,11 +55,11 @@ if files:
             if st.button(f"Convert {file.name}"):
                 buffer = BytesIO()
                 if conversion_type == "CSV":
-                    df.to_csv(buffer, index=False)
+                    df.to_csv(buffer, index=False , engine="xlsxwriter")
                     mime_type = "text/csv"
                     file_name = file.name.replace(ext, "csv")
                 elif conversion_type == "Excel":
-                    df.to_excel(buffer, index=False)
+                    df.to_excel(buffer, index=False , engine="xlsxwriter")
                     mime_type = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
                     file_name = file.name.replace(ext, "xlsx")
                 buffer.seek(0)
