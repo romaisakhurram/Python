@@ -15,10 +15,10 @@ if files:
 
         if ext == ".csv":
             df = pd.read_csv(file)
-        elif ext == ".xlxs":
+        elif ext == ".xlsx":
             df = pd.read_excel(file)
         else:
-            st.error(f"Unsupprted file type: {ext}")
+            st.error(f"Unsupported file type: {ext}")
             continue
 
         st.write(f"***File Name:*** {file.name}")
@@ -28,7 +28,7 @@ if files:
         st.dataframe(df.head())
 
         st.subheader("Data cleaning Options")
-        if st.checkbox(f"clean Data for {file.name}"):
+        if st.checkbox(f"Clean Data for {file.name}"):
             col1, col2 = st.columns(2)
 
             with col1:
@@ -38,37 +38,36 @@ if files:
 
             with col2:
                 if st.button(f"Fill Missing Values from {file.name}"):
-                  numeric_cols = df.select_dtypes(include=["number"]).columns
-                  df[numeric_cols] = df[numeric_cols].fillna(df[numeric_cols].mean())
-                  st.write("Missing Values have been filled!")
+                    numeric_cols = df.select_dtypes(include=["number"]).columns
+                    df[numeric_cols] = df[numeric_cols].fillna(df[numeric_cols].mean())
+                    st.write("Missing Values have been filled!")
 
             st.subheader("Select Columns to keep")
-            columns = st.multiselect(f"Choose Columns for {file.name}" , df.columns, default=df.columns)
+            columns = st.multiselect(f"Choose Columns for {file.name}", df.columns, default=df.columns)
             df = df[columns]
 
             st.subheader("Data Visualization")
-            if st.checkbox(f"show visualization for {file.name}"):
+            if st.checkbox(f"Show visualization for {file.name}"):
                 st.bar_chart(df.select_dtypes(include="number").iloc[:, :2])
 
             st.subheader("Conversion Options")
-            conversion_type = st.radio(f"Convert {file.name} to:" , ["CVS" , "Excel"] , key=file.name)
-            if st.button(f"Convert{file.name}"):
+            conversion_type = st.radio(f"Convert {file.name} to:", ["CSV", "Excel"], key=file.name)
+            if st.button(f"Convert {file.name}"):
                 buffer = BytesIO()
                 if conversion_type == "CSV":
                     df.to_csv(buffer, index=False)
-                    mime = "text/csv"
+                    mime_type = "text/csv"
                     file_name = file.name.replace(ext, "csv")
                 elif conversion_type == "Excel":
                     df.to_excel(buffer, index=False)
-                    mime = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+                    mime_type = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
                     file_name = file.name.replace(ext, "xlsx")
                 buffer.seek(0)
 
                 st.download_button(
-                   Label=f"Download Files, {file.name} as {conversion_type}",
-                   data=buffer,
-                   file_name=file_name,
-                   mime=mime_type
+                    label=f"Download {file.name} as {conversion_type}",
+                    data=buffer,
+                    file_name=file_name,
+                    mime=mime_type
                 )
     st.success("All Files Processing Completed")
-        
