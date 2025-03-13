@@ -3,15 +3,8 @@ import pandas as pd
 import os
 from io import BytesIO
 
-# Ensure openpyxl is installed
-try:
-    import openpyxl
-except ImportError:
-    st.error("Missing optional dependency 'openpyxl'. Please install it using pip: pip install openpyxl")
-    st.stop()
-
 st.set_page_config(page_title="File Convertor", layout="wide")
-st.title("File Convertor & Cleaner")
+st.title("File Convertor")
 st.write("It can convert CSV to Excel, Excel to CSV, and clean the data by removing duplicates and empty rows.")
 
 files = st.file_uploader("Upload CSV or Excel files", type=["csv", "xlsx"], accept_multiple_files=True)
@@ -19,50 +12,63 @@ files = st.file_uploader("Upload CSV or Excel files", type=["csv", "xlsx"], acce
 if files:
     for file in files:
         ext = os.path.splitext(file.name)[-1].lower()
-        try:
-            df = pd.read_csv(file) if ext == ".csv" else pd.read_excel(BytesIO(file.read()), engine="openpyxl")
-        except ImportError as e:
-            st.error(f"ImportError: {e}")
+
+        if ext == ".csv":
+            df = pd.read_csv(file)
+        elif ext == ".xlxs":
+            df = pd.read_excel(file)
+        else:
+            st.error(f"Unsupprted file type: {ext}")
             continue
-        except Exception as e:
-            st.error(f"Error: {e}")
-            continue
 
-        file.seek(0)  # Reset file pointer after reading
-        st.subheader(f"{file.name} - Preview")
-        st.dataframe(df.head())
-    
-        if st.checkbox(f"Remove Duplicate - {file.name}"):
-            df.drop_duplicates(inplace=True)
-            st.success("Duplicates Removed")
-            st.dataframe(df.head())
+        st.write(f"***File Name:*** {file.name}")
+        st.write(f"***File Size:*** {file.size/1024}")
 
-        if st.checkbox(f"Fill Missing value - {file.name}"):
-            df.fillna(df.select_dtypes(include=["number"]).mean(), inplace=True)
-            st.success("Missing Values filled with mean")
-            st.dataframe(df.head())
-
-        selected_columns = st.multiselect(f"Select columns - {file.name}", df.columns, default=df.columns)
-        df = df[selected_columns]
+        st.write("Preview the Head of the DataFrame")
         st.dataframe(df.head())
 
-        if st.checkbox(f"Show chart - {file.name}") and not df.select_dtypes(include=["number"]).empty:
-            st.bar_chart(df.select_dtypes(include=["number"]).iloc[:, :2])
+        st.subheader("Data cleaning Options")
+        if st.checkbox(f"clean Data for {file.name}"):
+            col1, col2 = st.columns(2)
 
-        format_choice = st.radio(f"Convert - {file.name} to:", ["csv", "Excel"], key=file.name)
+            with col1:
+                if st.button(f"Remove Duplicates from {file.name}"):
+                    df.drop_duplicates(inplace=True)
+                    st.write("Duplicates Removed!")
 
-        if st.button(f"Download - {file.name} as {format_choice}"):
-            output = BytesIO()
-            if format_choice == "csv":
-                df.to_csv(output, index=False)
-                mime = "text/csv"
-                new_name = file.name.replace(ext, "csv")
-            else:
-                df.to_excel(output, index=False, engine="openpyxl")
-                mime = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-                new_name = file.name.replace(ext, "xlsx")
+            with col2:
+                if st.button(f"Fill Missing Values from {file.name}"):
+                  numeric_cols = df.select_dtypes(include=["number"]).columns
+                  df[numeric_cols] = df[numeric_cols].fillna(df[numeric_cols].mean())
+                  st.write("Missing Values have been filled!")
 
-            output.seek(0)
-            st.download_button("Download files", file_name=new_name, data=output, mime=mime)
+            st.subheader("Select Columns to keep")
+            columns = st.multiselect(f"Choose Columns for {file.name}" , df.columns, default=df.columns)
+            df = df[columns]
 
-            st.success("Processing Completed")
+            st.subheader("Data Visualization")
+            if st.checkbox(f"show visualization for {file.name}"):
+                st.bar_chart(df.select_dtypes(include="number").iloc[:, :2])
+
+            st.subheader("Conversion Options")
+            conversion_type = st.radio(f"Convert {file.name} to:" , ["CVS" , "Excel"] , key=file.name)
+            if st.button(f"Convert{file.name}"):
+                buffer = BytesIO()
+                if conversion_type == "CSV":
+                    df.to_csv(buffer, index=False)
+                    mime = "text/csv"
+                    file_name = file.name.replace(ext, "csv")
+                elif conversion_type == "Excel":
+                    df.to_excel(buffer, index=False)
+                    mime = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+                    file_name = file.name.replace(ext, "xlsx")
+                buffer.seek(0)
+
+                st.download_button(
+                   Label=f"Download Files, {file.name} as {conversion_type}",
+                   data=buffer,
+                   file_name=file_name,
+                   mime=mime_type
+                )
+    st.success("All Files Processing Completed")
+        
