@@ -1,17 +1,19 @@
 import streamlit as st
 import pandas as pd
+import os
 from io import BytesIO
 
 st.set_page_config(page_title="File Convertor", layout="wide")
 st.title("File Convertor & Cleaner")
 st.write("It can convert CSV to Excel, Excel to CSV, and clean the data by removing duplicates and empty rows.")
 
-files = st.file_uploader("Upload csv or Excel files", type=["csv", "xlsx"], accept_multiple_files=True)
+files = st.file_uploader("Upload CSV or Excel files", type=["csv", "xlsx"], accept_multiple_files=True)
+
 if files:
     for file in files:
-        ext = file.name.split(".")[-1]
+        ext = os.path.splitext(file.name)[-1].lower()
         try:
-            df = pd.read_csv(file) if ext == "csv" else pd.read_excel(BytesIO(file.read()), engine="openpyxl")
+            df = pd.read_csv(file) if ext == ".csv" else pd.read_excel(BytesIO(file.read()), engine="openpyxl")
         except ImportError as e:
             st.error(f"ImportError: {e}")
             continue
