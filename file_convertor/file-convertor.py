@@ -2,7 +2,6 @@ import streamlit as st
 import pandas as pd
 import os
 from io import BytesIO
-import openpyxl
 
 st.set_page_config(page_title="File Convertor", layout="wide")
 st.title("File Convertor & Cleaner")
