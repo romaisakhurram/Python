@@ -1,0 +1,16 @@
+[
+    {
+        "title": "hello to see",
+        "author": "allam iqbal",
+        "year": "1999",
+        "genre": "fiction",
+        "read": true
+    },
+    {
+        "title": "the great poet",
+        "author": "quaid e azam",
+        "year": "2000",
+        "genre": "knowledge",
+        "read": true
+    }
+]
