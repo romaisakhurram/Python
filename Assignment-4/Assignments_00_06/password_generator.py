@@ -1,24 +1,26 @@
-import random
-import string
+import random 
+import string 
 
-def password_generator(length , use_digits , use_special):
-    characters = string.ascii_letters
+def generate_password(length, use_digits, use_special):
+    characters = string.ascii_letters 
 
     if use_digits:
-        characters += string.digits
+        characters += string.digits  
 
     if use_special:
-        characters += string.punctuation
-
+        characters += (
+            string.punctuation
+        )  
     return "".join(random.choice(characters) for _ in range(length))
 
-length = "Select Password Length" 
+try:
+    length = int(input("Select password length: ")) 
+except ValueError:
+    print("Invalid input. Please enter a valid number for the password length.")
+    exit()
 
-use_digits = "Use digit"
+use_digits = ("Include numbers") 
+use_special = "Include special characters"
 
-use_special ="Include Special Characters"
-
-if "Generate Password":
-    password = password_generator(length , use_digits , use_special)
-    print(f"Password Generate: {password}")
-
+password = generate_password(length, use_digits, use_special)  
+print(f"Generated Password: `{password}`") 
