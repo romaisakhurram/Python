@@ -3,8 +3,7 @@ import random
 
 st.title("Number Guessing Game")
 
-# Input for the guessed number
-original_number = random.randint(0, 99)
+original_number = random.randint(1, 99)
 
 guessed_number = st.number_input("Guess a number between 0 and 99", min_value=1, max_value=99)
 
